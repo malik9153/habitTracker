@@ -18,12 +18,10 @@ public class HabitTracker {
         habits = new HashMap<>();
         nextHabitNumber = 1;
     }
-
     public void addHabit(Habit habit) {
         habits.put(habit.getNumber(), habit);
         System.out.println("Habit added: " + habit.getName());
     }
-
     public void removeHabit(int habitNumber) {
         Habit habitToRemove = habits.remove(habitNumber);
         if (habitToRemove != null) {
@@ -57,10 +55,10 @@ public class HabitTracker {
             scanner.nextLine();
 
             if (choice == 1) {
-                currentUser = User.login();
+                currentUser.login();
                 loggedIn = currentUser != null;
             } else if (choice == 2) {
-                currentUser = User.register();
+                currentUser.register();
                 loggedIn = currentUser != null;
             } else {
                 System.out.println("Invalid choice. Please try again.");
@@ -70,7 +68,7 @@ public class HabitTracker {
         String choice;
 
         do {
-            System.out.println("\nWelcome, " + User.getUserName() + "!" + "\n" + "uniqueId: " + User.getUniqueId());
+            System.out.println("\nWelcome, " + currentUser.getUserName() + "!" + "\n" + "uniqueId: " + currentUser.getUniqueId());
 
             System.out.println("\nHabit Tracker Menu:");
             System.out.println("1. Add a habit");

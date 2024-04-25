@@ -13,34 +13,34 @@ import java.util.Scanner;
 import java.util.UUID;
 
 public class User {
-    static String userName;
-    static String uniqueId;
-    static String password;
+    private String userName;
+    private String uniqueId;
+    private String password;
 
-    static boolean loggedIn = false;
+    private final boolean loggedIn = false;
 
 
-    public static void setUserName(String userName) {
-        User.userName = userName;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public static String getUserName() {
-        return userName;
+    public  String getUserName() {
+        return this.userName;
     }
 
-    public static String getUniqueId() {
-        return uniqueId;
+    public String getUniqueId() {
+        return this.uniqueId;
     }
 
-    public static void setUniqueId(String uniqueId) {
-        User.uniqueId = uniqueId;
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
     }
 
-    public static void setPassword(String password) {
-        User.password = password;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public static User register() {
+    public void register() {
         JSONParser parser = new JSONParser();
         Scanner scanner = new Scanner(System.in);
         boolean quit = false;
@@ -50,7 +50,7 @@ public class User {
             System.out.print("Enter your username: ");
             String userInput = scanner.nextLine();
             if (quittable(userInput)) {
-                return null;
+                return;
             }
             String username = userInput;
 
@@ -58,7 +58,7 @@ public class User {
             userInput = scanner.nextLine();
 
             if (quittable(userInput)) {
-                return null;
+                return;
             }
             String password = userInput;
 
@@ -93,19 +93,18 @@ public class User {
                 e.printStackTrace();
             }
         }
-        return null;
     }
 
 
-    public static User login() {
+    public User login() {
         Scanner scanner = new Scanner(System.in);
         while (!loggedIn) {
             System.out.print("Enter your username: ");
-            String username = scanner.nextLine();
-            if (quittable(username)) {
+            String inputtedUsername = scanner.nextLine();
+            if (quittable(inputtedUsername)) {
                 return null;
             }
-            if (checkUserExists(username)) {
+            if (checkUserExists(inputtedUsername)) {
                 System.out.print("Enter your password: ");
                 String inputtedPassword = scanner.nextLine();
                 if (quittable(inputtedPassword)) {
@@ -114,7 +113,7 @@ public class User {
                 if (validatePassword(inputtedPassword)) {
                     System.out.print("Validated login successfully");
                     User user = new User();
-                    setUserName(username);
+                    setUserName(inputtedUsername);
                     setPassword(inputtedPassword);
                     setUniqueId(uniqueId);
                     return user;
@@ -125,10 +124,9 @@ public class User {
                 System.out.print("Invalid username \n");
             }
         }
-        return null;
     }
 
-    public static boolean checkUserExists(String username) {
+    public boolean checkUserExists(String username) {
         JSONParser parser = new JSONParser();
         try {
             Object obj = parser.parse(new FileReader("/Users/maliek.borwin/Library/CloudStorage/OneDrive-AutoTraderGroupPlc/Desktop/workspace/Digital Artefact/src/main/resources/static/UserAccount.json"));
@@ -162,7 +160,7 @@ public class User {
 //            Object obj = parser.parse(new FileReader("/Users/maliek.borwin/Library/CloudStorage/OneDrive-AutoTraderGroupPlc/Desktop/workspace/Digital Artefact/src/main/resources/static/UserAccount.json"));
 //        }
 //    }
-    public static boolean validatePassword(String inputtedPassword){
+    public boolean validatePassword(String inputtedPassword){
         return Objects.equals(inputtedPassword, password);
     }
 }
