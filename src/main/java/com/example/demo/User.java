@@ -96,27 +96,26 @@ public class User {
     }
 
 
-    public User login() {
+    public void login() {
         Scanner scanner = new Scanner(System.in);
         while (!loggedIn) {
             System.out.print("Enter your username: ");
             String inputtedUsername = scanner.nextLine();
             if (quittable(inputtedUsername)) {
-                return null;
+                return;
             }
             if (checkUserExists(inputtedUsername)) {
                 System.out.print("Enter your password: ");
                 String inputtedPassword = scanner.nextLine();
                 if (quittable(inputtedPassword)) {
-                    return null;
+                    return;
                 }
                 if (validatePassword(inputtedPassword)) {
                     System.out.print("Validated login successfully");
-                    User user = new User();
                     setUserName(inputtedUsername);
                     setPassword(inputtedPassword);
                     setUniqueId(uniqueId);
-                    return user;
+                    return;
                 } else {
                     System.out.print("Invalid password \n");
                 }

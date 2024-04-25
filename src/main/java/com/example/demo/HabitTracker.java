@@ -1,6 +1,10 @@
 package com.example.demo;
 
 import com.google.gson.Gson;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.*;
 import java.util.HashMap;
@@ -11,8 +15,7 @@ public class HabitTracker {
     private HashMap<Integer, Habit> habits;
     private int nextHabitNumber;
     private static boolean loggedIn = false;
-
-    private static User currentUser ;
+    public User currentUser = new User();
 
     public HabitTracker() {
         habits = new HashMap<>();
@@ -42,7 +45,7 @@ public class HabitTracker {
         }
     }
 
-    public static void main(String[] args) {
+    public void tracking() {
         HabitTracker tracker = new HabitTracker();
         Scanner scanner = new Scanner(System.in);
 
@@ -129,35 +132,52 @@ public class HabitTracker {
     }
 
     private void loadHabitsFromFile(String filename) {
-        String folderPath = "/Users/maliek.borwin/Library/CloudStorage/OneDrive-AutoTraderGroupPlc/Desktop/workspace/Digital Artefact/src/main/resources/static";
-        String filePath = folderPath + filename;
+        String folderPath = "/Users/maliek.borwin/Library/CloudStorage/OneDrive-AutoTraderGroupPlc/Desktop/workspace/Digital Artefact/src/main/resources/static/";
+        String filePath = folderPath + filename ;
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
-                int habitNumber = Integer.parseInt(parts[0]);
-                String habitName = parts[1];
-                habits.put(habitNumber, new Habit(habitNumber, habitName));
-                if (habitNumber >= nextHabitNumber) {
-                    nextHabitNumber = habitNumber + 1;
+                if (parts.length == 2) { // Check if the line has correct format
+                    int habitNumber = Integer.parseInt(parts[0]);
+                    String habitName = parts[1];
+                    habits.put(habitNumber, new Habit(habitNumber, habitName));
+                    if (habitNumber >= nextHabitNumber) {
+                        nextHabitNumber = habitNumber + 1;
+                    }
+                } else {
+                    System.out.println("Invalid line in file: " + line);
                 }
             }
         } catch (IOException e) {
             System.out.println("Error loading habits from file: " + e.getMessage());
         }
     }
+
     private void saveHabitsToFile(String filename) {
-        String folderPath = "/Users/maliek.borwin/Library/CloudStorage/OneDrive-AutoTraderGroupPlc/Desktop/workspace/Digital Artefact/src/main/resources/static";
+        JSONObject jsonObject = new JSONObject();
+        JSONArray habitsArray = new JSONArray();
+
+        for (Habit habit : habits.values()) {
+            JSONObject habitObj = new JSONObject();
+            habitObj.put("number", habit.getNumber());
+            habitObj.put("name", habit.getName());
+            habitsArray.add(habitObj);
+        }
+
+        jsonObject.put("habits", habitsArray);
+
+        String folderPath = "/Users/maliek.borwin/Library/CloudStorage/OneDrive-AutoTraderGroupPlc/Desktop/workspace/Digital Artefact/src/main/resources/static/";
         String filePath = folderPath + filename + ".json";
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            Gson gson = new Gson();
-            gson.toJson(getHabitLogs(), writer);
+        try (FileWriter fileWriter = new FileWriter(filePath)) {
+            fileWriter.write(jsonObject.toJSONString());
+            System.out.println("Habits saved successfully.");
         } catch (IOException e) {
             System.out.println("Error saving habits to file: " + e.getMessage());
         }
     }
-
+    
     private Map<String, Integer> getHabitLogs() {
         Map<String, Integer> habitLogs = new HashMap<>();
         for (Habit habit : habits.values()) {
@@ -166,3 +186,4 @@ public class HabitTracker {
         return habitLogs;
     }
 }
+
