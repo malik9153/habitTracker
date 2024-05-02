@@ -1,30 +1,36 @@
 package com.example.demo;
 
-import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.UUID;
 
 public class User {
     private String userName;
+    private String passwordHash;
+    private final String salt = generateSalt();
     private String uniqueId;
     private String password;
 
-    private final boolean loggedIn = false;
+    private boolean loggedIn = false;
 
 
     public void setUserName(String userName) {
         this.userName = userName;
     }
 
-    public  String getUserName() {
+    public String getUserName() {
         return this.userName;
     }
 
@@ -38,6 +44,24 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    private String hashPassword(String password, String salt) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            md.update(salt.getBytes());
+            byte[] hashedPassword = md.digest(password.getBytes());
+            return Base64.getEncoder().encodeToString(hashedPassword);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error hashing password: " + e.getMessage());
+        }
+    }
+
+    private String generateSalt() {
+        SecureRandom random = new SecureRandom();
+        byte[] saltBytes = new byte[16];
+        random.nextBytes(saltBytes);
+        return Base64.getEncoder().encodeToString(saltBytes);
     }
 
     public void register() {
@@ -60,11 +84,9 @@ public class User {
             if (quittable(userInput)) {
                 return;
             }
-            String password = userInput;
 
+            String hashedInputtedPassword = hashPassword(userInput, salt);
             String uniqueId = UUID.randomUUID().toString();
-
-
             quit = true;
             try {
                 Object obj = parser.parse(new FileReader("/Users/maliek.borwin/Library/CloudStorage/OneDrive-AutoTraderGroupPlc/Desktop/workspace/Digital Artefact/src/main/resources/static/UserAccount.json"));
@@ -75,7 +97,7 @@ public class User {
 
                 JSONObject newUser = new JSONObject();
                 newUser.put("Username", username);
-                newUser.put("Password", password);
+                newUser.put("Password", hashedInputtedPassword);
                 newUser.put("UniqueId", uniqueId);
 
 
@@ -110,10 +132,12 @@ public class User {
                 if (quittable(inputtedPassword)) {
                     return;
                 }
-                if (validatePassword(inputtedPassword)) {
+                String hashedInputtedPassword = hashPassword(inputtedPassword, salt);
+
+                if (checkPassword(hashedInputtedPassword)) {
                     System.out.print("Validated login successfully");
                     setUserName(inputtedUsername);
-                    setPassword(inputtedPassword);
+                    setPassword(hashedInputtedPassword);
                     setUniqueId(uniqueId);
                     return;
                 } else {
@@ -153,13 +177,7 @@ public class User {
         return Objects.equals(input, "/q");
     }
 
-//    public static void accessHabitFile(String uniqueId) {
-//        JSONParser parser = new JSONParser();
-//        try {
-//            Object obj = parser.parse(new FileReader("/Users/maliek.borwin/Library/CloudStorage/OneDrive-AutoTraderGroupPlc/Desktop/workspace/Digital Artefact/src/main/resources/static/UserAccount.json"));
-//        }
-//    }
-    public boolean validatePassword(String inputtedPassword){
-        return Objects.equals(inputtedPassword, password);
+    public boolean checkPassword(String inputtedPassword) {
+        return inputtedPassword.equals(password);
     }
 }
