@@ -2,15 +2,8 @@ package com.example.demo;
 
 import com.example.demo.utilities.loadHabitsFromFile;
 import com.example.demo.utilities.saveHabitsToFile;
-import com.google.gson.Gson;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
-import java.io.*;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
 public class HabitTracker {
@@ -70,7 +63,7 @@ public class HabitTracker {
                 System.out.println("Invalid choice. Please try again.");
             }
         }
-        tracker.habits = loadHabitsFromFile.loadHabitsFromFile1(currentUser.getUniqueId(), habits);
+        tracker.habits = loadHabitsFromFile.loadHabits(currentUser.getUniqueId(), habits);
         String choice;
 
         do {
@@ -122,7 +115,7 @@ public class HabitTracker {
                     }
                     break;
                 case "6":
-                    saveHabitsToFile.saveHabitsToFile2(currentUser.getUniqueId(),tracker);
+                    saveHabitsToFile.saveHabits(currentUser.getUniqueId(),tracker);
                     System.out.println("Exiting...");
                     break;
                 default:
