@@ -2,6 +2,7 @@ package com.example.demo.utilities;
 
 import com.example.demo.Habit;
 import com.example.demo.HabitTracker;
+import com.google.api.client.json.Json;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -17,7 +18,7 @@ public class saveHabitsToFile {
         JSONObject jsonObject = new JSONObject();
         JSONArray habitsArray = new JSONArray();
 
-        for (Map.Entry<Integer, Habit> entry : tracker.habits.entrySet()) {
+        for (Map.Entry<String, Habit> entry : tracker.habits.entrySet()) {
             JSONObject habitObj = new JSONObject();
             System.out.println(entry.getKey());
             habitObj.put("number", entry.getKey());
@@ -37,34 +38,22 @@ public class saveHabitsToFile {
             System.out.println("Error saving habits to file: " + e.getMessage());
         }
     }
-
     public static void saveHabitsToFile2(String filename, HabitTracker tracker) {
         JSONObject jsonObject;
-        JSONArray habitsArray;
 
         String folderPath = "src/main/resources/static/";
         String filePath = folderPath + filename + ".json";
+        JSONObject habitObj = new JSONObject();
 
-        try (FileReader fileReader = new FileReader(filePath)) {
-            JSONParser jsonParser = new JSONParser();
-            jsonObject = (JSONObject) jsonParser.parse(fileReader);
-            habitsArray = (JSONArray) jsonObject.get("habits");
-        } catch (IOException | ParseException e) {
-            jsonObject = new JSONObject();
-            habitsArray = new JSONArray();
+        for (Object key : tracker.habits.keySet()) {
+            String habitName = key.toString();
+            Habit habitDetails =  tracker.habits.get(habitName);
+            Integer logNumber =  habitDetails.getNumber();
+            habitObj.put(habitName, logNumber);
         }
-
-        for (Map.Entry<Integer, Habit> entry : tracker.habits.entrySet()) {
-            JSONObject habitObj = new JSONObject();
-            habitObj.put("number", entry.getKey());
-            habitObj.put("name", entry.getValue().getName());
-            habitsArray.add(habitObj);
-        }
-
-        jsonObject.put("habits", habitsArray);
 
         try (FileWriter fileWriter = new FileWriter(filePath)) {
-            fileWriter.write(jsonObject.toJSONString());
+            fileWriter.write(habitObj.toJSONString());
             System.out.println("Habits saved successfully.");
         } catch (IOException e) {
             System.out.println("Error saving habits to file: " + e.getMessage());

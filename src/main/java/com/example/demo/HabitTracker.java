@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class HabitTracker {
-    public HashMap<Integer, Habit> habits;
+    public HashMap<String, Habit> habits;
     private int nextHabitNumber;
     private static boolean loggedIn = false;
     public User currentUser = new User();
@@ -25,15 +25,15 @@ public class HabitTracker {
         nextHabitNumber = 1;
     }
     public void addHabit(Habit habit) {
-        habits.put(habit.getNumber(), habit);
+        habits.put(habit.getName(), habit);
         System.out.println("Habit added: " + habit.getName());
     }
-    public void removeHabit(int habitNumber) {
-        Habit habitToRemove = habits.remove(habitNumber);
+    public void removeHabit(String habitName) {
+        Habit habitToRemove = habits.remove(habitName);
         if (habitToRemove != null) {
             System.out.println("Habit removed: " + habitToRemove.getName());
         } else {
-            System.out.println("Habit not found with number: " + habitNumber);
+            System.out.println("Habit not found: " + habitName);
         }
     }
 
@@ -70,7 +70,7 @@ public class HabitTracker {
                 System.out.println("Invalid choice. Please try again.");
             }
         }
-        tracker.habits = loadHabitsFromFile.loadHabitsFromFile2(currentUser.getUniqueId(), habits, nextHabitNumber);
+        tracker.habits = loadHabitsFromFile.loadHabitsFromFile1(currentUser.getUniqueId(), habits);
         String choice;
 
         do {
@@ -93,19 +93,19 @@ public class HabitTracker {
                     tracker.addHabit(new Habit(tracker.nextHabitNumber++, habitName));
                     break;
                 case "2":
-                    System.out.print("Enter the number of the habit to remove: ");
-                    int habitNumberToRemove = Integer.parseInt(scanner.nextLine());
-                    tracker.removeHabit(habitNumberToRemove);
+                    System.out.print("Enter the name of the habit to remove: ");
+                    String habitNameToRemove = scanner.nextLine();
+                    tracker.removeHabit(habitNameToRemove);
                     break;
                 case "3":
-                    System.out.print("Enter the number of the habit to log: ");
-                    int habitNumberToLog = Integer.parseInt(scanner.nextLine());
-                    Habit habitToLog = tracker.habits.get(habitNumberToLog);
+                    System.out.print("Enter the name of the habit to log: ");
+                    String habitNameToLog = scanner.nextLine();
+                    Habit habitToLog = tracker.habits.get(habitNameToLog);
                     if (habitToLog != null) {
                         habitToLog.addLog();
                         System.out.println("Habit logged for today: " + habitToLog.getName());
                     } else {
-                        System.out.println("Habit not found with number: " + habitNumberToLog);
+                        System.out.println("Habit not found with number: " + habitToLog);
                     }
                     break;
                 case "4":
@@ -132,18 +132,6 @@ public class HabitTracker {
         } while (!choice.equals("6"));
 
         scanner.close();
-
-
-    }
-
-
-    
-    private Map<String, Integer> getHabitLogs() {
-        Map<String, Integer> habitLogs = new HashMap<>();
-        for (Habit habit : habits.values()) {
-            habitLogs.put(habit.getName(), habit.getNumber());
-        }
-        return habitLogs;
     }
 }
 
