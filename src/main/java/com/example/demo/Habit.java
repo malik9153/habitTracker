@@ -3,7 +3,7 @@ package com.example.demo;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-class Habit {
+public class Habit {
     private int number;
     private String name;
     private ArrayList<LogHabit> logs;
