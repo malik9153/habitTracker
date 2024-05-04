@@ -100,6 +100,9 @@ public class User {
                 newUser.put("Password", hashedInputtedPassword);
                 newUser.put("UniqueId", uniqueId);
 
+                setUserName(username);
+                setPassword(hashedInputtedPassword);
+                setUniqueId(uniqueId);
 
                 userArrayJson.add(newUser);
 

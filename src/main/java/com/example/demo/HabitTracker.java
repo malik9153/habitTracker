@@ -56,14 +56,16 @@ public class HabitTracker {
             if (choice == 1) {
                 currentUser.login();
                 loggedIn = currentUser != null;
+                tracker.habits = loadHabitsFromFile.loadHabits(currentUser.getUniqueId(), habits);
             } else if (choice == 2) {
                 currentUser.register();
                 loggedIn = currentUser != null;
             } else {
                 System.out.println("Invalid choice. Please try again.");
             }
+
+
         }
-        tracker.habits = loadHabitsFromFile.loadHabits(currentUser.getUniqueId(), habits);
         String choice;
 
         do {
