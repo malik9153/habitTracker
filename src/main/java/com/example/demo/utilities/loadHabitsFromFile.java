@@ -19,8 +19,9 @@ public class loadHabitsFromFile {
             JSONObject jsonObject = (JSONObject) obj;
             for (Object key : jsonObject.keySet()) {
                 String habitName = key.toString();
-                JSONObject habitDetails = jsonObject.get(habitName).toString();
-                Habit habit = new Habit(habitNumber, habitName);
+                Object habitDetails = jsonObject.get(habitName);
+                JSONObject habitDetailsObject = (JSONObject) habitDetails;
+                Habit habit = new Habit(habitName, habitDetailsObject);
                 habits.put(habitName, habit);
 
             }

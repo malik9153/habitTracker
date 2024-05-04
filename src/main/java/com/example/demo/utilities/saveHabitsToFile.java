@@ -8,18 +8,19 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class saveHabitsToFile {
-    public static void saveHabits(String filename, HabitTracker tracker) {
+    public static void saveHabits(String filename, HabitTracker habitTracker) {
 
         String folderPath = "src/main/resources/static/";
         String filePath = folderPath + filename + ".json";
         JSONObject habitObj = new JSONObject();
 
-        for (Object key : tracker.habits.keySet()) {
+        for (Object key : habitTracker.habits.keySet()) {
             JSONObject logObj = new JSONObject();
             String habitName = key.toString();
-            Habit habitDetails =  tracker.habits.get(habitName);
+            Habit habitDetails =  habitTracker.habits.get(habitName);
             ArrayList<LocalDate> logDates = habitDetails.getLogDates();
             Integer logNumber =  habitDetails.getLogNumber();
             logObj.put(logNumber, logDates);

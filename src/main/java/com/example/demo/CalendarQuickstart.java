@@ -91,7 +91,7 @@ public class CalendarQuickstart {
                 .setOrderBy("startTime")
                 .setSingleEvents(true)
                 .execute();
-        List<Event> items = events.getItems();
+        List<Event> items = events.setItems();
         if (items.isEmpty()) {
             System.out.println("No upcoming events found.");
         } else {

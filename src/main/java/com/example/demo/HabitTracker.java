@@ -18,9 +18,10 @@ public class HabitTracker {
         this.scanner = new Scanner(System.in);
     }
 
-    public void addHabit(String habitName) {
-        Habit newHabit = new Habit(0, habitName);
-        habits.put(habitName, newHabit);
+    public void addHabit(String habitName,HabitTracker habitTracker) {
+        Habit newHabit = new Habit(habitName);
+        habitTracker.habits.put(habitName, newHabit);
+//        habits.put(habitName, newHabit);
         System.out.println("Habit added: " + habitName);
     }
 
@@ -33,12 +34,12 @@ public class HabitTracker {
         }
     }
 
-    public void displayHabits() {
-        if (habits.isEmpty()) {
+    public void displayHabits(HabitTracker habitTracker) {
+        if (habitTracker.habits.isEmpty()) {
             System.out.println("No habits to display.");
         } else {
             System.out.println("Your habits:");
-            for (Habit habit : habits.values()) {
+            for (Habit habit : habitTracker.habits.values()) {
                 System.out.println("- " + habit.getLogNumber() + ". " + habit.getName());
             }
         }
@@ -56,10 +57,12 @@ public class HabitTracker {
         switch (choice) {
             case 1:
                 currentUser.login();
+                loggedIn = currentUser != null;
                 habitTracker.habits = loadHabitsFromFile.loadHabits(currentUser.getUniqueId(), habits);
                 break;
             case 2:
                 currentUser.register();
+                loggedIn = currentUser != null;
                 break;
             default:
                 System.out.println("Invalid choice. Please try again.");
@@ -79,7 +82,7 @@ public class HabitTracker {
     private void addingHabit(HabitTracker habitTracker) {
         System.out.print("Enter the habit to add: ");
         String habitName = scanner.nextLine();
-        addHabit(habitName);
+        addHabit(habitName, habitTracker);
     }
     private void removingHabit(HabitTracker habitTracker) {
         System.out.print("Enter the name of the habit to remove: ");
@@ -126,7 +129,7 @@ public class HabitTracker {
                     LoggingHabit(habitTracker);
                     break;
                 case "4":
-                    habitTracker.displayHabits();
+                    habitTracker.displayHabits(habitTracker);
                     break;
                 case "5":
                     displayingLogs(habitTracker);
