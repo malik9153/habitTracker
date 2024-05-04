@@ -6,6 +6,8 @@ import org.json.simple.JSONObject;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
 
 public class saveHabitsToFile {
     public static void saveHabits(String filename, HabitTracker tracker) {
@@ -15,10 +17,13 @@ public class saveHabitsToFile {
         JSONObject habitObj = new JSONObject();
 
         for (Object key : tracker.habits.keySet()) {
+            JSONObject logObj = new JSONObject();
             String habitName = key.toString();
             Habit habitDetails =  tracker.habits.get(habitName);
-            Integer logNumber =  habitDetails.getNumber();
-            habitObj.put(habitName, logNumber);
+            ArrayList<LocalDate> logDates = habitDetails.getLogDates();
+            Integer logNumber =  habitDetails.getLogNumber();
+            logObj.put(logNumber, logDates);
+            habitObj.put(habitName, logObj);
         }
 
         try (FileWriter fileWriter = new FileWriter(filePath)) {

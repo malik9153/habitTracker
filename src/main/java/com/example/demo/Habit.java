@@ -1,39 +1,46 @@
 package com.example.demo;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class Habit {
-    private int number;
-    private String name;
-    private ArrayList<LogHabit> logs;
+    private int LogNumber;
+    private final String name;
+    private ArrayList<LocalDate> logDates;
 
-    public Habit(int number, String name) {
-        this.number = number;
+    public Habit(int logNumber, String name) {
+        this.LogNumber = logNumber;
         this.name = name;
-        this.logs = new ArrayList<>();
+        this.logDates = new ArrayList<>();
     }
 
-    public int getNumber() {
-        return number;
+    public int getLogNumber() {
+        return LogNumber;
     }
 
     public String getName() {
         return name;
     }
-
-    public void addLog() {
-        logs.add(new LogHabit(name));
+    public ArrayList<java.time.LocalDate> getLogDates() {
+        return logDates;
     }
 
+
+    public void addLog() {
+        logDates.add(LocalDate.now());
+        LogNumber++;
+    }
+
+
     public void displayLogs() {
-        if (logs.isEmpty()) {
-            System.out.println("No logs for habit: " + name);
+        if (logDates.isEmpty()) {
+            System.out.println("No logDates for habit: " + name);
         } else {
             System.out.println("Logs for habit: " + name);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-            for (LogHabit log : logs) {
-                System.out.println("- Date: " + log.getDate().format(formatter));
+            for (LocalDate log : logDates) {
+                System.out.println("- Date: " + log.format(formatter));
             }
         }
     }
