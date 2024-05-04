@@ -19,7 +19,7 @@ import java.util.UUID;
 public class User {
     private String userName;
     private String passwordHash;
-    private final String salt = generateSalt();
+    private final String salt = "gFAZhExYQOyyrL+ZU5LAKg==";
     private String uniqueId;
     private String password;
 
