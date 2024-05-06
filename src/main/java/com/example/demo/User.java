@@ -16,9 +16,8 @@ import java.util.Objects;
 import java.util.Scanner;
 import java.util.UUID;
 
-public class User {
+public class User extends Entity{
     private String userName;
-    private String passwordHash;
     private final String salt = "gFAZhExYQOyyrL+ZU5LAKg==";
     private String uniqueId;
     private String password;
@@ -57,13 +56,7 @@ public class User {
         }
     }
 
-    private String generateSalt() {
-        SecureRandom random = new SecureRandom();
-        byte[] saltBytes = new byte[16];
-        random.nextBytes(saltBytes);
-        return Base64.getEncoder().encodeToString(saltBytes);
-    }
-
+    @Override
     public void register() {
         JSONParser parser = new JSONParser();
         Scanner scanner = new Scanner(System.in);
@@ -120,7 +113,7 @@ public class User {
         }
     }
 
-
+    @Override
     public void login() {
         Scanner scanner = new Scanner(System.in);
         while (!loggedIn) {

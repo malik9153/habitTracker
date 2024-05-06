@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-public class Habit {
+public class Habit implements Loggable {
     private int logNumber;
     private final String name;
     private final ArrayList<LocalDate> logDates;
@@ -52,8 +52,6 @@ public class Habit {
         }
         return null;
     }
-
-    // Getters for logNumber, name, and logDates
     public int getLogNumber() {
         return logNumber;
     }
@@ -66,13 +64,13 @@ public class Habit {
         return logDates;
     }
 
-
+    @Override
     public void addLog() {
         logDates.add(LocalDate.now());
         logNumber++;
     }
 
-
+    @Override
     public void displayLogs() {
         if (logDates.isEmpty()) {
             System.out.println("No logDates for habit: " + name);

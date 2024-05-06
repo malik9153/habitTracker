@@ -58,26 +58,38 @@ public class HabitTracker {
     }
 
     private void handleLoginOrRegistration(HabitTracker habitTracker) {
-        System.out.println("1. Login");
-        System.out.println("2. Register");
-        System.out.print("Enter your choice: ");
-        int choice = scanner.nextInt();
-        scanner.nextLine();
+        int choice;
 
-        switch (choice) {
-            case 1:
-                currentUser.login();
-                loggedIn = currentUser != null;
-                habitTracker.habits = loadHabitsFromFile.loadHabits(currentUser.getUniqueId(), habits);
-                break;
-            case 2:
-                currentUser.register();
-                loggedIn = currentUser != null;
-                break;
-            default:
-                System.out.println("Invalid choice. Please try again.");
-        }
+        do {
+            System.out.println("1. Login");
+            System.out.println("2. Register");
+            System.out.print("Enter your choice: ");
+
+            if (scanner.hasNextInt()) {
+                choice = scanner.nextInt();
+                scanner.nextLine();
+                switch (choice) {
+                    case 1:
+                        currentUser.login();
+                        loggedIn = currentUser != null;
+                        habitTracker.habits = loadHabitsFromFile.loadHabits(currentUser.getUniqueId(), habits);
+                        break;
+                    case 2:
+                        currentUser.register();
+                        loggedIn = currentUser != null;
+                        break;
+                    default:
+                        System.out.println("Invalid choice. Please try again.");
+                        break;
+                }
+            } else {
+                System.out.println("Invalid input. Please enter a number.");
+                scanner.nextLine();
+                choice = -1;
+            }
+        } while (choice != 1 && choice != 2); // Continue loop until a valid choice is made
     }
+
 
     private void displayMenu() {
         System.out.println("\nHabit Tracker Menu:");
