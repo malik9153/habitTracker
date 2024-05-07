@@ -16,14 +16,12 @@ import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.EventReminder;
-import com.google.api.services.calendar.model.Events;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -80,20 +78,12 @@ public class CalendarQuickstart {
         return credential;
     }
 
-    public static void setEvent(String habitName, DateTime startDateForReminder, DateTime endDateForReminder) throws IOException, GeneralSecurityException {
-        // Build a new authorized API client service.
+    public static void createReminder(Event event, DateTime startDateForReminder, DateTime endDateForReminder) throws IOException, GeneralSecurityException {
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         Calendar service =
                 new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                         .setApplicationName(APPLICATION_NAME)
                         .build();
-
-        Event event = new Event()
-                .setSummary(habitName)
-                .setLocation("800 Howard St., San Francisco, CA 94103")
-                .setDescription("A chance to hear more about Google's developer products.");
-
-        DateTime startDateTime = new DateTime("2024-05-28T09:00:00-07:00");
         EventDateTime start = new EventDateTime()
                 .setDateTime(startDateForReminder)
                 .setTimeZone("Europe/London");
@@ -103,7 +93,7 @@ public class CalendarQuickstart {
                 .setTimeZone("Europe/London");
         event.setEnd(end);
 
-        EventReminder[] reminderOverrides = new EventReminder[] {
+        EventReminder[] reminderOverrides = new EventReminder[]{
                 new EventReminder().setMethod("email").setMinutes(24 * 60),
                 new EventReminder().setMethod("popup").setMinutes(10),
         };
@@ -116,4 +106,5 @@ public class CalendarQuickstart {
         event = service.events().insert(calendarId, event).execute();
         System.out.printf("Event created: %s\n", event.getHtmlLink());
     }
+
 }
