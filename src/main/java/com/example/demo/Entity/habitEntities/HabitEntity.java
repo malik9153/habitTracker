@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.Entity.habitEntities;
 
 import com.example.demo.interfaces.Loggable;
 import org.json.simple.JSONObject;
@@ -9,27 +9,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Habit implements Loggable {
+public class HabitEntity implements Loggable {
     private int logNumber;
     private final String name;
     private final ArrayList<LocalDate> logDates;
 
-    public Habit(String name) {
+    public HabitEntity(String name) {
         this.logNumber = 0;
         this.name = name;
         this.logDates = new ArrayList<>();
     }
 
-    public Habit(String name, JSONObject habitDetails) {
+    public HabitEntity(String name, JSONObject habitDetails) {
         this.name = name;
         this.logDates = new ArrayList<>();
 
-        // Extracting log number and dates from the habitDetails JSON object
-        String key = habitDetails.keySet().iterator().next().toString(); // Assuming only one key
+        String key = habitDetails.keySet().iterator().next().toString();
         this.logNumber = Integer.parseInt(key);
         ArrayList<?> dateValues = (ArrayList<?>) habitDetails.get(key);
 
-        // Parsing and adding dates to logDates list
         for (Object dateValue : dateValues) {
             if (dateValue instanceof ArrayList) {
                 ArrayList<?> dateComponents = (ArrayList<?>) dateValue;
@@ -41,7 +39,6 @@ public class Habit implements Loggable {
         }
     }
 
-    // Helper method to parse LocalDate from date components
     private LocalDate parseLocalDate(ArrayList<?> dateComponents) {
         if (dateComponents.size() >= 3) {
             int year = (int) dateComponents.get(0);

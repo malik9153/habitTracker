@@ -1,28 +1,27 @@
 package com.example.demo.utilities;
 
-import com.example.demo.Habit;
-import com.example.demo.HabitTracker;
+import com.example.demo.Entity.habitEntities.HabitsEntity;
+import com.example.demo.Entity.habitEntities.HabitEntity;
 import org.json.simple.JSONObject;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class saveHabitsToFile {
-    public static void saveHabits(String filename, HabitTracker habitTracker) {
+    public static void saveHabits(String filename, HabitsEntity habitsEntity)  {
 
         String folderPath = "src/main/resources/static/";
         String filePath = folderPath + filename + ".json";
         JSONObject habitObj = new JSONObject();
 
-        for (Object key : habitTracker.habits.keySet()) {
+        for (Object key : habitsEntity.habits.keySet()) {
             JSONObject logObj = new JSONObject();
             String habitName = key.toString();
-            Habit habitDetails =  habitTracker.habits.get(habitName);
-            ArrayList<LocalDate> logDates = habitDetails.getLogDates();
-            Integer logNumber =  habitDetails.getLogNumber();
+            HabitEntity habitEntityDetails =  habitsEntity.habits.get(habitName);
+            ArrayList<LocalDate> logDates = habitEntityDetails.getLogDates();
+            Integer logNumber =  habitEntityDetails.getLogNumber();
             logObj.put(logNumber, logDates);
             habitObj.put(habitName, logObj);
         }

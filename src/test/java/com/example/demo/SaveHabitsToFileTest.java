@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.Entity.habitEntities.HabitsEntity;
 import com.example.demo.utilities.saveHabitsToFile;
 import org.junit.jupiter.api.Test;
 
@@ -16,14 +17,14 @@ public class SaveHabitsToFileTest {
 
     @Test
     void saveHabits_ValidData_Success() {
-        HabitTracker habitTracker = new HabitTracker();
-        habitTracker.addHabit(EXERCISE, habitTracker);
-        habitTracker.addHabit(READING, habitTracker);
-        habitTracker.addHabit(MEDITATION, habitTracker);
+        HabitsEntity habitsEntity = new HabitsEntity();
+        habitsEntity.addHabit(EXERCISE);
+        habitsEntity.addHabit(READING);
+        habitsEntity.addHabit(MEDITATION);
 
         String filename = "saveTestHabits";
 
-        saveHabitsToFile.saveHabits(filename, habitTracker);
+        saveHabitsToFile.saveHabits(filename, habitsEntity);
 
         assertTrue(Files.exists(Path.of("src/main/resources/static/" + filename + ".json")));
 
@@ -31,10 +32,10 @@ public class SaveHabitsToFileTest {
 
     @Test
     void saveHabits_EmptyData_Success() {
-        HabitTracker habitTracker = new HabitTracker();
+        HabitsEntity habitsEntity = new HabitsEntity();
         String filename = "testEmptyHabits";
 
-        saveHabitsToFile.saveHabits(filename, habitTracker);
+        saveHabitsToFile.saveHabits(filename, habitsEntity);
 
         assertTrue(Files.exists(Path.of("src/main/resources/static/" + filename + ".json")));
 

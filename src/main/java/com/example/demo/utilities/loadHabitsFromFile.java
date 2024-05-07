@@ -1,6 +1,6 @@
 package com.example.demo.utilities;
 
-import com.example.demo.Habit;
+import com.example.demo.Entity.habitEntities.HabitEntity;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import org.json.simple.parser.ParseException;
 
 import java.util.HashMap;
 public class loadHabitsFromFile {
-    public static HashMap<String, Habit> loadHabits(String filename, HashMap<String, Habit> habits) {
+    public static HashMap<String, HabitEntity> loadHabits(String filename, HashMap<String, HabitEntity> habits) {
         String folderPath = "src/main/resources/static/";
         String filePath = folderPath + filename + ".json";
         JSONParser jsonParser = new JSONParser();
@@ -21,8 +21,8 @@ public class loadHabitsFromFile {
                 String habitName = key.toString();
                 Object habitDetails = jsonObject.get(habitName);
                 JSONObject habitDetailsObject = (JSONObject) habitDetails;
-                Habit habit = new Habit(habitName, habitDetailsObject);
-                habits.put(habitName, habit);
+                HabitEntity habitEntity = new HabitEntity(habitName, habitDetailsObject);
+                habits.put(habitName, habitEntity);
 
             }
         } catch (IOException | ParseException e) {

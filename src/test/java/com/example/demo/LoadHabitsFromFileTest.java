@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.Entity.habitEntities.HabitEntity;
 import com.example.demo.utilities.loadHabitsFromFile;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +13,7 @@ public class LoadHabitsFromFileTest {
     @Test
     void loadHabits_ValidFile_Success() {
         String filename = "testHabits";
-        HashMap<String, Habit> habits = new HashMap<>();
+        HashMap<String, HabitEntity> habits = new HashMap<>();
 
         habits = loadHabitsFromFile.loadHabits(filename, habits);
 
@@ -22,15 +23,15 @@ public class LoadHabitsFromFileTest {
         assertTrue(habits.containsKey("Reading"));
         assertTrue(habits.containsKey("Meditation"));
 
-        Habit exerciseHabit = habits.get("Exercise");
-        assertNotNull(exerciseHabit);
-        assertEquals(3, exerciseHabit.getLogNumber());
+        HabitEntity exerciseHabitEntity = habits.get("Exercise");
+        assertNotNull(exerciseHabitEntity);
+        assertEquals(3, exerciseHabitEntity.getLogNumber());
     }
 
     @Test
     void loadHabits_InvalidFile_ExceptionThrown() {
         String filename = "nonExistentFile";
-        HashMap<String, Habit> habits = new HashMap<>();
+        HashMap<String, HabitEntity> habits = new HashMap<>();
 
         assertThrows(RuntimeException.class, () -> loadHabitsFromFile.loadHabits(filename, habits));
     }

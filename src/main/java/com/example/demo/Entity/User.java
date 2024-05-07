@@ -1,7 +1,7 @@
-package com.example.demo;
+package com.example.demo.Entity;
 
-import com.example.demo.Entity.UserEntity;
-import com.example.demo.Exception.InvalidInputException;
+import com.example.demo.Abstract.UserEntity;
+import com.example.demo.exception.InvalidInputException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
