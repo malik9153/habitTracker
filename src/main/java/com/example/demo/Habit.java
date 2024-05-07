@@ -1,10 +1,13 @@
 package com.example.demo;
 
+import com.example.demo.interfaces.Loggable;
 import org.json.simple.JSONObject;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Habit implements Loggable {
     private int logNumber;
@@ -68,6 +71,24 @@ public class Habit implements Loggable {
     public void addLog() {
         logDates.add(LocalDate.now());
         logNumber++;
+    }
+
+    public void filterLogsByDateRange(LocalDate startDate, LocalDate endDate) {
+        List<LocalDate> filteredLogDates = logDates.stream()
+                .filter(date -> date.isAfter(startDate) && date.isBefore(endDate))
+                .collect(Collectors.toList());
+        displayLogs(filteredLogDates );
+    }
+    public void displayLogs(List<LocalDate> filteredLogDates) {
+        if (filteredLogDates.isEmpty()) {
+            System.out.println("No logDates for habit: " + name);
+        } else {
+            System.out.println("Logs for habit: " + name);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+            for (LocalDate log : filteredLogDates) {
+                System.out.println("- Date: " + log.format(formatter));
+            }
+        }
     }
 
     @Override
