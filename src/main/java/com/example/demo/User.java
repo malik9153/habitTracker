@@ -1,5 +1,7 @@
 package com.example.demo;
 
+import com.example.demo.Entity.UserEntity;
+import com.example.demo.Exception.InvalidInputException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -10,17 +12,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Objects;
 import java.util.Scanner;
 import java.util.UUID;
 
-public class User extends Entity{
-    private String userName;
-    private final String salt = "gFAZhExYQOyyrL+ZU5LAKg==";
-    private String uniqueId;
-    private String password;
+public class User extends UserEntity {
+
 
     private boolean loggedIn = false;
 
@@ -33,8 +31,12 @@ public class User extends Entity{
         return this.userName;
     }
 
+
     public String getUniqueId() {
         return this.uniqueId;
+    }
+    public Boolean isLoggedIn() {
+        return this.loggedIn;
     }
 
     public void setUniqueId(String uniqueId) {
@@ -43,6 +45,14 @@ public class User extends Entity{
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    private boolean isValidUsername(String username) {
+        return username != null && !username.isEmpty();
+    }
+
+    private boolean isValidPassword(String password) {
+        return password != null && password.length() >= 6; // Example validation: Password must be at least 6 characters
     }
 
     private String hashPassword(String password, String salt) {
@@ -60,55 +70,60 @@ public class User extends Entity{
     public void register() {
         JSONParser parser = new JSONParser();
         Scanner scanner = new Scanner(System.in);
-        boolean quit = false;
-        while (!quit) {
-            System.out.print("Type /q to quit: ");
-
-            System.out.print("Enter your username: ");
-            String userInput = scanner.nextLine();
-            if (quittable(userInput)) {
-                return;
-            }
-            String username = userInput;
-
-            System.out.print("Enter your password: ");
-            userInput = scanner.nextLine();
-
-            if (quittable(userInput)) {
-                return;
-            }
-
-            String hashedInputtedPassword = hashPassword(userInput, salt);
-            String uniqueId = UUID.randomUUID().toString();
-            quit = true;
+        while (!loggedIn) {
             try {
-                Object obj = parser.parse(new FileReader("/Users/maliek.borwin/Library/CloudStorage/OneDrive-AutoTraderGroupPlc/Desktop/workspace/Digital Artefact/src/main/resources/static/UserAccount.json"));
+                System.out.print("Type /q to quit: ");
 
-                JSONObject jsonObject = (JSONObject) obj;
+                System.out.print("Enter your username: ");
+                String username = scanner.nextLine();
+                if (quittable(username)) {
+                    return;
+                }
+                if (!isValidUsername(username)) {
+                    throw new InvalidInputException("Invalid username");
+                }
+                System.out.print("Enter your password: ");
+                String password = scanner.nextLine();
+                if (quittable(password)) {
+                    return;
+                }
+                if (!isValidPassword(password)) {
+                    throw new InvalidInputException("Invalid password");
+                }
+                String hashedInputtedPassword = hashPassword(password, salt);
+                String uniqueId = UUID.randomUUID().toString();
+                loggedIn = true;
+                try {
+                    Object obj = parser.parse(new FileReader("/Users/maliek.borwin/Library/CloudStorage/OneDrive-AutoTraderGroupPlc/Desktop/workspace/Digital Artefact/src/main/resources/static/UserAccount.json"));
 
-                JSONArray userArrayJson = (JSONArray) jsonObject.get("Users");
+                    JSONObject jsonObject = (JSONObject) obj;
 
-                JSONObject newUser = new JSONObject();
-                newUser.put("Username", username);
-                newUser.put("Password", hashedInputtedPassword);
-                newUser.put("UniqueId", uniqueId);
+                    JSONArray userArrayJson = (JSONArray) jsonObject.get("Users");
 
-                setUserName(username);
-                setPassword(hashedInputtedPassword);
-                setUniqueId(uniqueId);
+                    JSONObject newUser = new JSONObject();
+                    newUser.put("Username", username);
+                    newUser.put("Password", hashedInputtedPassword);
+                    newUser.put("UniqueId", uniqueId);
 
-                userArrayJson.add(newUser);
+                    setUserName(username);
+                    setPassword(hashedInputtedPassword);
+                    setUniqueId(uniqueId);
 
-                jsonObject.put("Users", userArrayJson);
+                    userArrayJson.add(newUser);
 
-                FileWriter fileWriter = new FileWriter("/Users/maliek.borwin/Library/CloudStorage/OneDrive-AutoTraderGroupPlc/Desktop/workspace/Digital Artefact/src/main/resources/static/UserAccount.json");
-                fileWriter.write(jsonObject.toJSONString());
-                fileWriter.flush();
-                fileWriter.close();
+                    jsonObject.put("Users", userArrayJson);
 
-                System.out.println("User registered successfully.");
-            } catch (ParseException | IOException e) {
-                e.printStackTrace();
+                    FileWriter fileWriter = new FileWriter("/Users/maliek.borwin/Library/CloudStorage/OneDrive-AutoTraderGroupPlc/Desktop/workspace/Digital Artefact/src/main/resources/static/UserAccount.json");
+                    fileWriter.write(jsonObject.toJSONString());
+                    fileWriter.flush();
+                    fileWriter.close();
+
+                    System.out.println("User registered successfully.");
+                } catch (ParseException | IOException e) {
+                    e.printStackTrace();
+                }
+            } catch (InvalidInputException e) {
+                System.out.println("Error: " + e.getMessage());
             }
         }
     }
@@ -117,31 +132,43 @@ public class User extends Entity{
     public void login() {
         Scanner scanner = new Scanner(System.in);
         while (!loggedIn) {
-            System.out.print("Enter your username: ");
-            String inputtedUsername = scanner.nextLine();
-            if (quittable(inputtedUsername)) {
-                return;
-            }
-            if (checkUserExists(inputtedUsername)) {
-                System.out.print("Enter your password: ");
-                String inputtedPassword = scanner.nextLine();
-                if (quittable(inputtedPassword)) {
-                    return;
-                }
-                String hashedInputtedPassword = hashPassword(inputtedPassword, salt);
+            try {
+                System.out.print("Type /q to quit: ");
 
-                if (checkPassword(hashedInputtedPassword)) {
-                    System.out.print("Validated login successfully");
-                    setUserName(inputtedUsername);
-                    setPassword(hashedInputtedPassword);
-                    setUniqueId(uniqueId);
+                System.out.print("Enter your username: ");
+                String username = scanner.nextLine();
+                if (quittable(username)) {
                     return;
-                } else {
-                    System.out.print("Invalid password \n");
                 }
-            } else {
-                System.out.print("Invalid username \n");
+
+                if (!isValidUsername(username)) {
+                    throw new InvalidInputException("Invalid username");
+                }
+
+                System.out.print("Enter your password: ");
+                String password = scanner.nextLine();
+                if (quittable(password)) {
+                    return;
+                }
+                String hashedInputtedPassword = hashPassword(password, salt);
+
+                if (checkUserExists(username)) {
+                    if (checkPassword(hashedInputtedPassword)) {
+                        System.out.println("Validated login successfully");
+                        setUserName(username);
+                        setPassword(hashedInputtedPassword);
+                        setUniqueId(uniqueId);
+                        return;
+                    } else {
+                        System.out.println("Invalid password");
+                    }
+                } else {
+                    System.out.println("Invalid username");
+                }
+            } catch (InvalidInputException e) {
+                System.out.println("Error: " + e.getMessage());
             }
+            loggedIn = true;
         }
     }
 
